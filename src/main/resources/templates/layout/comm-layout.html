@@ -6,6 +6,7 @@ th:fragment="commLayout(head, main)">
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" href="/css/commons/common.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <!-- 추가 head소스가 삽입되는 지점 -->
 <th:block th:replace="${head}"/> 
 </head>
@@ -38,7 +39,62 @@ th:fragment="commLayout(head, main)">
 				</div>
 			</nav>
 			<hr>
-		</div>
+			<section id="nb">
+				<h1>메뉴</h1>
+				<div class="wrap flex">
+					<nav id="gnb">
+						<h1>전체상품</h1>
+						<div class="wrap">
+							<script type="text/javascript">
+								$(function(){
+									//$("cate-wrap").on("load", "cate", menuLoading)
+									hoverCategory()
+								});
+								
+								function hoverCategory(){
+									$(".cate").hover(menuLoading, function(){
+										$(this).find(".cate-wrap").hide();
+									});
+								}
+											
+								
+								function menuLoading(target){
+									//console.log("val : "+$(target).val());
+									var target=$(this);
+									var pno=target.attr("value");
+									
+									$.ajax({
+										url:`/common/layout/categories/${pno}`,
+										success:function(result){
+											$(target).find(".cate-wrap").html(result).show();
+											
+										}
+									});
+								}
+							</script>
+							<ul class="cate-wrap">
+								<li value="0" class="cate">
+									<p>전체상품</p>
+									<div class="cate-wrap"></div>
+								</li>
+							</ul>
+							<dl id="tot-menu" class="cate">
+								<dt>전체상품</dt>
+								<dd class="cate-wrap">
+									
+								</dd>
+							</dl>
+						</div>
+					</nav>
+					<nav id="lnb">
+						<h1>이벤트상품</h1>
+						<div class="wrap">
+						
+						</div>
+					</nav>
+				</div>
+			</section>
+			</div>
 	</header>
 	<!-- 메인영역이 삽입되는 지점 -->
 	<th:block th:replace="${main}"/> 
@@ -47,6 +103,7 @@ th:fragment="commLayout(head, main)">
 		<div class="wrap view-size">
 			<p>회사정보와 약관 등</p>
 		</div>
+		
 	</footer>	
 </body>
 </html>

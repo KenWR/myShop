@@ -28,7 +28,7 @@ public class CategoryEntity {
 	private long no;
 	
 	private String name;
-	//int depth;
+	private int depth;
 	
 	@JoinColumn//fk : parent_no
 	@ManyToOne

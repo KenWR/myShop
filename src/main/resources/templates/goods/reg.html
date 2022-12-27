@@ -15,35 +15,37 @@
     $(document).ready(function() {
         $('#summernote').summernote();
         //1차 카테고리 불러오기
-        //getCategory();
+        getCategory();
     });
-    function cateSelected(el){
+    function subCateSelected(el){
     	//어떤 카테고리가 변경되었는지
-    	var depth=$(el).index();
-    	//0:1차 1:2차 2:3차
-    	if(depth==2)return
+    	var depth=$(el).index()+1;
+    	//0:1차 1:2차 2:3차, 3:4차
+    	if(depth==4)return//마지막 카테고리가 선택되면 종료
     	
-    	
-  		var cateNo=$(el).val();
+    	//하위 카테고리 검색 후 태그 생성
+  		var parentNo=$(el).val();
   		$.ajax({
-    		url:`/common/categories/${cateNo}`,
+    		url:`/common/categories/${parentNo}`,
     		success: function(result){//result==category.html
     			//$(".first").html(result);
     			//현재 상위카테고리뒤에 삽입할 예정 바로 위에있는거 쓰면 그냥 덮어쓰기가됨
     			//var length=$(".cate>.category").length;
-    			$(`.cate>.category:gt(${depth})`).remove();
-    			$(".cate>.category").last().after(result);
-    			$(".cate>.category").last().find(".depth").text(depth+2+"차 카테고리");
+    			$(`#cate>.category:gt(${depth-1})`).remove();
+    			$("#cate>.category").last().after(result);
+    			$("#cate>.category").last().find(".depth").text(depth+1+"차 카테고리");
     		}
     	});
     }
     
     function getCategory(){
+    	//1차 카테고리 정보를 읽어
     	$.ajax({
     		url:"/common/categories",
     		success: function(result){//result==category.html
-    			$(".cate").html(result);
-    			$(".cate>.category").last().find(".depth").text("1차 카테고리");
+    			$("#cate").html(result);
+    			var depth=$("#cate>.category").last().index()+1;
+    			$("#cate>.category").last().find(".depth").text(depth+"차 카테고리");
     		}
     	});
     }
@@ -97,11 +99,12 @@
 		<h1>메인 컨텐츠</h1>
 		<div class="wrap"> 
 			<p>상품 등록 페이지</p>
+			<form action="/admin/goods" method="post" enctype="mutipart/form-data">
 			<table>
 				<tr>
 					<td>카테고리</td>
-					<td id="cate">
-						<div class="cate">
+					<td>
+						<div id="cate">
 								
 						</div>
 					</td>
@@ -126,19 +129,24 @@
 						<div class="addimg">
 							<label class="img" for="addimg">+</label>
 							<input id="addimg" class="gimg" type="file" name="gimg" onchange="gimgChanged(this)">
+							<input type="hidden" class="newName" name="newName">
 						</div>
 						<!-- 여기에 동적 삽입 -->
 					</td>
 				</tr>
 				<tr>
 					<td>가격</td>
-					<td><input type="text" name="title" placeholder="가격을 입력하세요"></td>
+					<td><input type="text" name="price" placeholder="가격을 입력하세요"></td>
+				</tr>
+				<tr>
+					<td>수량</td>
+					<td><input type="text" name="stock" placeholder="가격을 입력하세요"></td>
 				</tr>
 				<tr>
 					<td colspan="2">상세정보</td>
 				</tr>
 				<tr>
-					<td colspan="2"><textarea id="summernote"></textarea></td>
+					<td colspan="2"><textarea id="summernote" name="content"></textarea></td>
 				</tr>
 				<tr>
 					<td colspan="2">
@@ -146,6 +154,7 @@
 					</td>
 				</tr>
 			</table>
+			</form>
 		</div>
 	</main>
 </body>
